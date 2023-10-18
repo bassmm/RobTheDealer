@@ -1,2 +1,4 @@
 # MostFairBlackJackGame
- Text-Based Python Blackcjack game 
+ Want to play blackjack but don't have anyone to play with? Probably not. But i did.
+
+

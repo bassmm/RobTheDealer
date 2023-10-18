@@ -73,17 +73,35 @@ for card in player_hand:
     current_card = "[]".join(card)
     player_value += Deck.pop(current_card)
 
+
+
+def winorlose() -> str:
+    if dealer_value > player_value :
+        return "You lost"
+    elif player_value > dealer_value :
+            return "You won"
+    else:
+        return "Draw"
+
+endround = False
+
+while endround == False:
+    pass
+
 print(f"""
 
 Dealer
 -------------------------------------
-{dealer_hand} Value = {dealer_value} 
+{dealer_hand[0],"?"} Value = {dealer_value} 
 -------------------------------------
 
 Player
 -------------------------------------
 {player_hand} Value = {player_value} 
 -------------------------------------
+
+{winorlose()}
+
 """)
 
 #print("[]".join(dealer_hand[0]))
