@@ -26,7 +26,7 @@ Deck = {
     '8_of_diamonds.png':8,
     '9_of_diamonds.png':9,
     '10_of_diamonds.png':10, 
-    'jack_of_diamonds.png♦':10,
+    'jack_of_diamonds.png':10,
     'queen_of_diamonds.png':10,
     'king_of_diamonds.png':10,
     #Spades
