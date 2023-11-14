@@ -1,5 +1,7 @@
-import random
+import pygame, random
+from sys import exit
 
+#Deck Hash Map#
 Deck = {
     #Hearts
     'ace_of_hearts.png':11, 
@@ -59,49 +61,126 @@ Deck = {
     'king_of_clubs.png':10,
 }
 
-dealer_hand = [random.choices(list(Deck.keys())),random.choices(list(Deck.keys()))]
-dealer_value = 0
+#INITIALIZATION CODE#
+pygame.init()
+screen = pygame.display.set_mode((800,400))
+pygame.display.set_caption('MostFairBlackJackGame')
+clock = pygame.time.Clock()
 
-for card in dealer_hand:
+#INITIAL CALCULATIONS#
+
+
+
+#----GRAPHICS----#
+
+#FONTS#
+title_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 48)
+game_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 24)
+
+#BACKGROUND#
+table_surface = pygame.image.load('graphics/background_wood.png')
+
+#TEXT#
+title_text = title_font.render('MostFairBlackJackGame', True, 'White')
+dealer_text = game_font.render('Dealer', True, 'White')
+player_text = game_font.render('Player', True, 'White')
+
+#--CARDS--#
+
+#DEALER
+d_value = 0
+d_hand = [random.choices(list(Deck.keys())),random.choices(list(Deck.keys()))]
+d_card1 = pygame.image.load(f'graphics/cards/{"".join((d_hand[0]))}')
+d_card2 = pygame.image.load(f'graphics/cards/card_back.png')
+
+d_card1_y = -100
+d_card2_y = -100
+
+for card in d_hand:
     current_card = "[]".join(card)
-    dealer_value += Deck.pop(current_card)
+    d_value += Deck.pop(current_card)
 
-player_hand = [random.choices(list(Deck.keys())),random.choices(list(Deck.keys()))]
-player_value = 0
+#PLAYER#
+p_value = 0
+p_hand = [random.choices(list(Deck.keys())),random.choices(list(Deck.keys()))]
+p_card1 = pygame.image.load(f'graphics/cards/{"".join((p_hand[0]))}')
+p_card2 = pygame.image.load(f'graphics/cards/{"".join((p_hand[1]))}')
 
-for card in player_hand:
+p_card1_y = 400
+p_card2_y = 400
+
+for card in p_hand:
     current_card = "[]".join(card)
-    player_value += Deck.pop(current_card)
+    p_value += Deck.pop(current_card)
 
+#--SFX--#
+#--INTRO SEQUENCE--#
+cardOpenPackage = pygame.mixer.Sound("sfx/cardOpenPackage1.wav")
+cardTakeOutPackage = pygame.mixer.Sound("sfx/cardTakeOutPackage1.wav")
+cardShuffle = pygame.mixer.Sound("sfx/cardShuffle.wav")
 
+cardPlace1 = pygame.mixer.Sound("sfx/cardPlace1.wav")
+cardPlace2 = pygame.mixer.Sound("sfx/cardPlace2.wav")
+cardPlace3 = pygame.mixer.Sound("sfx/cardPlace3.wav")
+cardPlace4 = pygame.mixer.Sound("sfx/cardPlace4.wav")
 
-def winorlose() -> str:
-    if dealer_value > player_value :
-        return "You lost"
-    elif player_value > dealer_value :
-            return "You won"
-    else:
-        return "Draw"
+playintro = True
+playsound1 = True
+playsound2 = True
+playsound3 = True
+playsound4 = True
 
-endround = False
+print(d_value)
+print(p_value)
+#MAIN CODE#
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+    
+    #RENDERING
+    #BASE#
+    screen.blit(table_surface,(0,0))
+    screen.blit(title_text,(300,10))
+    screen.blit(dealer_text,(30,60))
+    screen.blit(player_text,(30,210))
+    #DEALER#
+    if playintro:
+        pygame.display.update()
+        cardOpenPackage.play()
+        pygame.time.wait(1200)
+        cardTakeOutPackage.play()
+        pygame.time.wait(600)
+        cardShuffle.play()
+        pygame.time.wait(3200)
+        playintro = False
 
-while endround == False:
-    pass
-
-print(f"""
-
-Dealer
--------------------------------------
-{dealer_hand[0],"?"} Value = {dealer_value} 
--------------------------------------
-
-Player
--------------------------------------
-{player_hand} Value = {player_value} 
--------------------------------------
-
-{winorlose()}
-
-""")
-
-#print("[]".join(dealer_hand[0]))
+    if playsound1:
+        cardPlace1.play()
+        playsound1 = False
+    if d_card1_y < 90:
+        d_card1_y += 10
+    
+    if d_card1_y == 90 and d_card2_y < 90:
+        if playsound2:
+            cardPlace2.play()
+            playsound2 = False
+        d_card2_y += 10
+    screen.blit(d_card1,(30,d_card1_y))
+    screen.blit(d_card2,(60,d_card2_y))
+    #PLAYER#
+    if d_card2_y == 90 and p_card1_y > 240:
+        if playsound3:
+            cardPlace4.play()
+            playsound3 = False
+        p_card1_y -= 10    
+    screen.blit(p_card1,(30,p_card1_y))
+    if p_card1_y == 240 and p_card2_y > 240:
+        if playsound4:
+            cardPlace3.play()
+            playsound4 = False
+        p_card2_y -= 10    
+    screen.blit(p_card2,(60,p_card2_y))
+    pygame.display.update()
+    clock.tick(60)
