@@ -3,7 +3,7 @@
 ## Overview
 
  - A python game based on the 'blackjack' card game, following the saem rules however with the objective of robbing the dealer of his money. Created with the use of the pygame library. 
->**NOTE:**  This project was intended to be a challange for myslef as i wanted to get better at python programming.
+>**NOTE:**  This project was intended to be a challange for myslef as i wanted to get better at python programming and overall improving my ability to translate ideas into code.
 
 ## Requirements
  - Python (3.x recommended)
