@@ -1,7 +1,6 @@
 import pygame, random
 from sys import exit
 
-from regex import P
 
 #Deck Hash Map#
 Deck = {
@@ -87,23 +86,37 @@ title_text = title_font.render('RobTheDealer', True, 'White')
 dealer_text = game_font.render('Dealer', True, 'White')
 player_text = game_font.render('Player', True, 'White')
 
+
+#MONEY SYSTEM#
+d_money = 1000
+p_money = 1000
+
+d_money_text = game_font.render(f"${d_money}", True, (143, 197, 111))
+
+p_money_text = game_font.render(f"${p_money}", True, (143, 197, 111))
+
 #BUTTONS#
 
 
 #--CARDS--#
 
 #DEALER
-d_money = 1000
 d_value = 0
 d_hand = []
 d_value_list = []
 
-#searches d_hand, gets card and mathces it with value in Deck then pops it
-for x in range(12):
-    taken_card = random.choices(list(Deck))
-    d_hand.append(taken_card)
-    current_card = "[]".join(taken_card)
-    d_value_list.append(Deck.pop(current_card))
+#searches hand, gets card and mathces it with value in Deck then pops it
+def assign_card_to_hand(hand:list,value_list:list):
+    global Deck
+    for x in range(12):
+        taken_card = random.choices(list(Deck))
+        hand.append(taken_card)
+        current_card = "[]".join(taken_card)
+        value_list.append(Deck.pop(current_card))
+
+
+assign_card_to_hand(d_hand,d_value_list)
+
 
 d_card1 = pygame.image.load(f'graphics/cards/{"".join((d_hand[0]))}').convert_alpha()
 d_card2hidden = pygame.image.load(f'graphics/cards/card_back.png').convert_alpha()
@@ -124,16 +137,12 @@ d_card_y = -100
 
 d_value = d_value_list[0] + d_value_list[1]
 #PLAYER#
-p_money = 1000
 p_value = 0
 p_value_list = []
 p_hand = []
 
-for x in range(12):
-    taken_card = random.choices(list(Deck))
-    p_hand.append(taken_card)
-    current_card = "[]".join(taken_card)
-    p_value_list.append(Deck.pop(current_card))
+assign_card_to_hand(p_hand,p_value_list)
+
 
 p_card1 = pygame.image.load(f'graphics/cards/{"".join((p_hand[0]))}').convert_alpha()
 p_card2 = pygame.image.load(f'graphics/cards/{"".join((p_hand[1]))}').convert_alpha()
@@ -192,60 +201,160 @@ def hit():
     global p_value
     global hit_count
     hit_count += 1
-    new_card = random.choices(list(Deck.keys()))
-    p_value += Deck.pop("[]".join(new_card))
-    new_card_img = pygame.image.load(f'graphics/cards/{"[]".join(new_card)}').convert_alpha()
+    p_value += p_value_list[(1+hit_count)]
+
+def display_cards_after_hit():
+    global hit_count
+    if hit_count > 0:
+        screen.blit(p_card3,(90,250))
+    if hit_count > 1:
+        screen.blit(p_card4,(120,250))
+    if hit_count > 2:
+        screen.blit(p_card5,(150,250))
+    if hit_count > 3:
+        screen.blit(p_card6,(180,250))
+    if hit_count > 4:
+        screen.blit(p_card7,(210,250))
+    if hit_count > 5:
+        screen.blit(p_card8,(240,250))
+    if hit_count > 6:
+        screen.blit(p_card9,(270,250))
+    if hit_count > 7:
+        screen.blit(p_card10,(300,250))
+    if hit_count > 8:
+        screen.blit(p_card11,(330,250))
+    if hit_count > 9:
+        screen.blit(p_card12,(360,250))
+
+is_stand = False
+
+
+def stand():
+    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck
+    is_stand = True
+    if p_value > d_value and p_value <= 21:
+        d_money -= bet_value
+        p_money += bet_value
+    if p_value < d_value or p_value > 21:
+        d_money +=  bet_value
+        p_money -= bet_value
+        
+    hit_count = 0
+    p_value = 0
+    d_value = 0
+    d_value_list = []
+    p_value_list = []
+    p_hand = []
+    d_hand = []
+
+    Deck = {'ace_of_hearts.png':11, '2_of_hearts.png':2,'3_of_hearts.png':3,'4_of_hearts.png':4,'5_of_hearts.png':5,'6_of_hearts.png':6,'7_of_hearts.png':7,'8_of_hearts.png':8,'9_of_hearts.png':9,'10_of_hearts.png':10, 'jack_of_hearts.png':10,'queen_of_hearts.png':10,'king_of_hearts.png':10,'ace_of_diamonds.png':11, '2_of_diamonds.png':2,'3_of_diamonds.png':3,'4_of_diamonds.png':4,'5_of_diamonds.png':5,'6_of_diamonds.png':6,'7_of_diamonds.png':7,'8_of_diamonds.png':8,'9_of_diamonds.png':9,'10_of_diamonds.png':10, 'jack_of_diamonds.png':10,'queen_of_diamonds.png':10,'king_of_diamonds.png':10,'ace_of_spades.png':11,'2_of_spades.png':2,'3_of_spades.png':3,'4_of_spades.png':4,'5_of_spades.png':5,'6_of_spades.png':6,'7_of_spades.png':7,'8_of_spades.png':8,'9_of_spades.png':9,'10_of_spades.png':10,'jack_of_spades.png':10,'queen_of_spades.png':10,'king_of_spades.png':10,'ace_of_clubs.png':11, '2_of_clubs.png':2,'3_of_clubs.png':3,'4_of_clubs.png':4,'5_of_clubs.png':5,'6_of_clubs.png':6,'7_of_clubs.png':7,'8_of_clubs.png':8,'9_of_clubs.png':9,'10_of_clubs.png':10, 'jack_of_clubs.png':10,'queen_of_clubs.png':10,'king_of_clubs.png':10,}
+
+    assign_card_to_hand(d_hand,d_value_list)
+    assign_card_to_hand(p_hand,p_value_list)
     
-p1y = p_card_y
-p2y = p_card_y
-d1y = d_card_y
-d2y = d_card_y
+    d_value = d_value_list[0] + d_value_list[1]
+    p_value = p_value_list[0] + p_value_list[1]
+
+
+#Value Input#
+user_text = ''
+input_rect = pygame.Rect(0,0,140,30)
+active_colour = pygame.Color('White')
+inactive_colour = pygame.Color('Grey')
+bet_value = 0
+box_colour = inactive_colour
+
+active = False
+
+
 #MAIN CODE#
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if input_rect.collidepoint(event.pos):
+                active = True
+                box_colour = active_colour
+            else:
+                box_colour = inactive_colour
+                active = False
+        
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_h:
+            if active == True:
+                if event.key == pygame.K_BACKSPACE:
+                    user_text = user_text[:-1]
+                else:
+                    user_text += event.unicode
+            if event.key == pygame.K_h and active == False:
                 hit()
-                print (p_value)
-    #RENDERING
-    #BASE#
+                print (f'p_value = {p_value}')
+                print (f'bet_value = {bet_value}')
+            if event.key == pygame.K_RETURN:
+                bet_value = int(user_text)
+                user_text = ''
+            if event.key == pygame.K_s and active == False:
+                stand()
+                print (f'd_value = {d_value}')
+                print (f'p_value = {p_value}')
+    if p_value > 21:
+        stand()
+    #refresh card images
+    p_card1 = pygame.image.load(f'graphics/cards/{"".join((p_hand[0]))}').convert_alpha()
+    p_card2 = pygame.image.load(f'graphics/cards/{"".join((p_hand[1]))}').convert_alpha()
+    p_card3 = pygame.image.load(f'graphics/cards/{"".join((p_hand[2]))}').convert_alpha()
+    p_card4 = pygame.image.load(f'graphics/cards/{"".join((p_hand[3]))}').convert_alpha()
+    p_card5 = pygame.image.load(f'graphics/cards/{"".join((p_hand[4]))}').convert_alpha()
+    p_card6 = pygame.image.load(f'graphics/cards/{"".join((p_hand[5]))}').convert_alpha()
+    p_card7 = pygame.image.load(f'graphics/cards/{"".join((p_hand[6]))}').convert_alpha()
+    p_card8 = pygame.image.load(f'graphics/cards/{"".join((p_hand[7]))}').convert_alpha()
+    p_card9 = pygame.image.load(f'graphics/cards/{"".join((p_hand[8]))}').convert_alpha()
+    p_card10 = pygame.image.load(f'graphics/cards/{"".join((p_hand[9]))}').convert_alpha()
+    p_card11 = pygame.image.load(f'graphics/cards/{"".join((p_hand[10]))}').convert_alpha()
+    p_card12 = pygame.image.load(f'graphics/cards/{"".join((p_hand[11]))}').convert_alpha()
+
+    d_card1 = pygame.image.load(f'graphics/cards/{"".join((d_hand[0]))}').convert_alpha()
+    d_card2hidden = pygame.image.load(f'graphics/cards/card_back.png').convert_alpha()
+    d_card2 = pygame.image.load(f'graphics/cards/{"".join((d_hand[1]))}').convert_alpha()
+    d_card3 = pygame.image.load(f'graphics/cards/{"".join((d_hand[2]))}').convert_alpha()
+    d_card4 = pygame.image.load(f'graphics/cards/{"".join((d_hand[3]))}').convert_alpha()
+    d_card5 = pygame.image.load(f'graphics/cards/{"".join((d_hand[4]))}').convert_alpha()
+    d_card6 = pygame.image.load(f'graphics/cards/{"".join((d_hand[5]))}').convert_alpha()
+    d_card7 = pygame.image.load(f'graphics/cards/{"".join((d_hand[6]))}').convert_alpha()
+    d_card8 = pygame.image.load(f'graphics/cards/{"".join((d_hand[7]))}').convert_alpha()
+    d_card9 = pygame.image.load(f'graphics/cards/{"".join((d_hand[8]))}').convert_alpha()
+    d_card10 = pygame.image.load(f'graphics/cards/{"".join((d_hand[9]))}').convert_alpha()
+    d_card11 = pygame.image.load(f'graphics/cards/{"".join((d_hand[10]))}').convert_alpha()
+    d_card12 = pygame.image.load(f'graphics/cards/{"".join((d_hand[11]))}').convert_alpha()
+    
+    d_money_text = game_font.render(f"${d_money}", True, (143, 197, 111))
+    p_money_text = game_font.render(f"${p_money}", True, (143, 197, 111))
+    
+    # RENDERING
+    # Base
     screen.blit(table_surface,(0,0))
     screen.blit(title_text,(300,10))
     screen.blit(dealer_text,(30,60))
     screen.blit(player_text,(30,210))
-    #DEALER#
-    intro_sequence()
-
-    if playsound1:
-        cardPlace1.play()
-        playsound1 = False
-    if d_card_y < 90:
-        d_card_y += 10
+    screen.blit(d_money_text,(100,60))
+    screen.blit(p_money_text,(100, 210))
+    # Text Box 
+    pygame.draw.rect(screen, box_colour, input_rect, 2)
+    text_surface = game_font.render(user_text,True,(255,255,255))
+    screen.blit(text_surface,(input_rect.x + 5,input_rect.y + 5))
+    input_rect.w = max(100,(text_surface.get_width() + 10))
+    # Dealer
+    screen.blit(d_card1,(30,100))
+    screen.blit(d_card2hidden,(60,100))
+    # Player 
+    screen.blit(p_card1,(30,250)) 
+    screen.blit(p_card2,(60,250))
     
-    if d_card_y == 90 and d_card_y < 90:
-        if playsound2:
-            cardPlace2.play()
-            playsound2 = False
-        d_card_y += 10
-    screen.blit(d_card1,(30,d_card_y))
-    screen.blit(d_card2hidden,(60,d_card_y))
-    #PLAYER#
-    if d_card_y == 90 and p_card_y > 240:
-        if playsound3:
-            cardPlace4.play()
-            playsound3 = False
-        p_card_y -= 10    
-    screen.blit(p_card1,(30,p_card_y))
-    if p_card_y == 240 and p_card_y > 240:
-        if playsound4:
-            cardPlace3.play()
-            playsound4 = False
-        p_card_y -= 10    
-    screen.blit(p_card2,(60,p_card_y))
-    #if hit_count == 1:
-        #screen.blit(new_card_img,(90,240))
+
+    display_cards_after_hit()
+    
+    is_stand = False
     pygame.display.update()
     clock.tick(60)
