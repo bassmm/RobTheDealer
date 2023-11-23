@@ -77,6 +77,7 @@ clock = pygame.time.Clock()
 #FONTS#
 title_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 48)
 game_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 24)
+bet_input_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 32)
 
 #BACKGROUND#
 table_surface = pygame.image.load('graphics/background_wood.png').convert()
@@ -85,6 +86,7 @@ table_surface = pygame.image.load('graphics/background_wood.png').convert()
 title_text = title_font.render('RobTheDealer', True, 'White')
 dealer_text = game_font.render('Dealer', True, 'White')
 player_text = game_font.render('Player', True, 'White')
+bet_input_title = game_font.render ('Bet Amount:',True, 'White')
 
 
 #MONEY SYSTEM#
@@ -230,7 +232,7 @@ is_stand = False
 
 
 def stand():
-    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck
+    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck, nobet
     is_stand = True
     if p_value > d_value and p_value <= 21:
         d_money -= bet_value
@@ -255,47 +257,83 @@ def stand():
     d_value = d_value_list[0] + d_value_list[1]
     p_value = p_value_list[0] + p_value_list[1]
 
+    nobet = True
+
 
 #Value Input#
 user_text = ''
-input_rect = pygame.Rect(0,0,140,30)
-active_colour = pygame.Color('White')
-inactive_colour = pygame.Color('Grey')
+input_rect = pygame.Rect(30,200,400,40)
 bet_value = 0
-box_colour = inactive_colour
 
-active = False
 
+nobet = True
+
+def bet_screen():
+    global nobet
+    global user_text
+    global bet_value
+    active = False
+    active_colour = pygame.Color('White')
+    inactive_colour = pygame.Color('Grey')
+    box_colour = inactive_colour
+    while nobet:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if input_rect.collidepoint(event.pos):
+                    active = True
+                    box_colour = active_colour
+                else:
+                    box_colour = inactive_colour
+                    active = False
+            
+            if event.type == pygame.KEYDOWN:
+                if active == True:
+                    if event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]
+                    else:
+                        user_text += event.unicode
+
+                if event.key == pygame.K_RETURN:
+                    bet_value = int(user_text)
+                    user_text = ''
+                    nobet = False
+        
+        # Base
+        screen.blit(table_surface,(0,0))
+        screen.blit(title_text,(300,10))
+        screen.blit(dealer_text,(30,60))
+        screen.blit(player_text,(30,100))
+        screen.blit(d_money_text,(100,60))
+        screen.blit(p_money_text,(100, 100))
+        screen.blit(bet_input_title,(30,170))
+        # Text Box 
+        pygame.draw.rect(screen, box_colour, input_rect, 2)
+        text_surface = bet_input_font.render(user_text,True,(255,255,255))
+        screen.blit(text_surface,(input_rect.x + 5,input_rect.y + 2))
+        input_rect.w = max(100,(text_surface.get_width() + 10))
+        pygame.display.update()
 
 #MAIN CODE#
 while True:
+
+    bet_screen()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-        
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if input_rect.collidepoint(event.pos):
-                active = True
-                box_colour = active_colour
-            else:
-                box_colour = inactive_colour
-                active = False
-        
+             
         if event.type == pygame.KEYDOWN:
-            if active == True:
-                if event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]
-                else:
-                    user_text += event.unicode
-            if event.key == pygame.K_h and active == False:
+            if event.key == pygame.K_h:
                 hit()
                 print (f'p_value = {p_value}')
                 print (f'bet_value = {bet_value}')
-            if event.key == pygame.K_RETURN:
-                bet_value = int(user_text)
-                user_text = ''
-            if event.key == pygame.K_s and active == False:
+
+            if event.key == pygame.K_s:
                 stand()
                 print (f'd_value = {d_value}')
                 print (f'p_value = {p_value}')
@@ -340,11 +378,7 @@ while True:
     screen.blit(player_text,(30,210))
     screen.blit(d_money_text,(100,60))
     screen.blit(p_money_text,(100, 210))
-    # Text Box 
-    pygame.draw.rect(screen, box_colour, input_rect, 2)
-    text_surface = game_font.render(user_text,True,(255,255,255))
-    screen.blit(text_surface,(input_rect.x + 5,input_rect.y + 5))
-    input_rect.w = max(100,(text_surface.get_width() + 10))
+
     # Dealer
     screen.blit(d_card1,(30,100))
     screen.blit(d_card2hidden,(60,100))
