@@ -87,6 +87,7 @@ title_text = title_font.render('RobTheDealer', True, 'White')
 dealer_text = game_font.render('Dealer', True, 'White')
 player_text = game_font.render('Player', True, 'White')
 bet_input_title = game_font.render ('Bet Amount:',True, 'White')
+click_to_continue = game_font.render ('click anywhere to continue',True, 'White')
 
 
 #MONEY SYSTEM#
@@ -164,6 +165,9 @@ p_card_y = 400
 
 
 p_value = p_value_list[0] + p_value_list[1]
+#used to check for 2 aces as starting hand
+if p_value == 22:
+    p_value = 12
 
 #--SFX--#
 #--INTRO SEQUENCE--#
@@ -197,16 +201,45 @@ def intro_sequence():
         pygame.time.wait(3200)
         playintro = False
 
+
+def pause():
+    wait = True
+    while wait:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                wait = False
+
+
 #HIT/STAND FUNCTIONS#
 hit_count = 0
+dhit_count = 0
 def hit():
     global p_value
     global hit_count
     hit_count += 1
-    p_value += p_value_list[(1+hit_count)]
+    if p_value_list[(1+hit_count)] == 11 and p_value > 10:
+        p_value += 1
+    else:
+        p_value += p_value_list[(1+hit_count)]
+
+
+
+def dealer_hit():
+    global d_value
+    global dhit_count
+    screen.blit(d_card2,(60,100))
+    while d_value < 17:
+        dhit_count += 1
+        d_value += d_value_list[(1+hit_count)]
+
+
 
 def display_cards_after_hit():
     global hit_count
+    global dhit_count
     if hit_count > 0:
         screen.blit(p_card3,(90,250))
     if hit_count > 1:
@@ -228,20 +261,48 @@ def display_cards_after_hit():
     if hit_count > 9:
         screen.blit(p_card12,(360,250))
 
+    if dhit_count > 0:
+        screen.blit(d_card3,(90,100))
+    if dhit_count > 1:
+        screen.blit(d_card4,(120,100))
+    if dhit_count > 2:
+        screen.blit(d_card5,(150,100))
+    if dhit_count > 3:
+        screen.blit(d_card6,(180,100))
+    if dhit_count > 4:
+        screen.blit(d_card7,(210,100))
+    if dhit_count > 5:
+        screen.blit(d_card8,(240,100))
+    if dhit_count > 6:
+        screen.blit(d_card9,(270,100))
+    if dhit_count > 7:
+        screen.blit(d_card10,(300,100))
+    if dhit_count > 8:
+        screen.blit(d_card11,(330,100))
+    if dhit_count > 9:
+        screen.blit(d_card12,(360,100))
 is_stand = False
 
 
 def stand():
-    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck, nobet
+    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck, nobet, dhit_count
     is_stand = True
-    if p_value > d_value and p_value <= 21:
+    dealer_hit()
+    display_cards_after_hit()
+    screen.blit(click_to_continue,(0,0))
+    pygame.display.update()
+    
+    pause()
+
+    if p_value == 21 or p_value > d_value or d_value > 21:
         d_money -= bet_value
         p_money += bet_value
-    if p_value < d_value or p_value > 21:
+    if d_value == 21 or d_value > p_value or p_value > 21:
         d_money +=  bet_value
         p_money -= bet_value
         
     hit_count = 0
+    dhit_count = 0
     p_value = 0
     d_value = 0
     d_value_list = []
@@ -316,6 +377,10 @@ def bet_screen():
         screen.blit(text_surface,(input_rect.x + 5,input_rect.y + 2))
         input_rect.w = max(100,(text_surface.get_width() + 10))
         pygame.display.update()
+
+
+
+
 
 #MAIN CODE#
 while True:
