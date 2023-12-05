@@ -5,7 +5,7 @@ from sys import exit
 #Deck Hash Map#
 Deck = {
     #Hearts
-    'ace_of_hearts.png':11, 
+    'ace_of_hearts.png':1, 
     '2_of_hearts.png':2,
     '3_of_hearts.png':3,
     '4_of_hearts.png':4,
@@ -19,7 +19,7 @@ Deck = {
     'queen_of_hearts.png':10,
     'king_of_hearts.png':10,
     #Diamonds
-    'ace_of_diamonds.png':11, 
+    'ace_of_diamonds.png':1, 
     '2_of_diamonds.png':2,
     '3_of_diamonds.png':3,
     '4_of_diamonds.png':4,
@@ -33,7 +33,7 @@ Deck = {
     'queen_of_diamonds.png':10,
     'king_of_diamonds.png':10,
     #Spades
-    'ace_of_spades.png':11, 
+    'ace_of_spades.png':1, 
     '2_of_spades.png':2,
     '3_of_spades.png':3,
     '4_of_spades.png':4,
@@ -47,7 +47,7 @@ Deck = {
     'queen_of_spades.png':10,
     'king_of_spades.png':10,
     #Clubs
-    'ace_of_clubs.png':11, 
+    'ace_of_clubs.png':1, 
     '2_of_clubs.png':2,
     '3_of_clubs.png':3,
     '4_of_clubs.png':4,
@@ -98,10 +98,12 @@ d_money_text = game_font.render(f"${d_money}", True, (143, 197, 111))
 
 p_money_text = game_font.render(f"${p_money}", True, (143, 197, 111))
 
-#BUTTONS#
-
 
 #--CARDS--#
+
+# Ace is considered as 11 only once and rest of the time it is taken as 1
+d_first_ace = True
+p_first_ace = True
 
 #DEALER
 d_value = 0
@@ -139,6 +141,10 @@ d_card_y = -100
 
 
 d_value = d_value_list[0] + d_value_list[1]
+if d_value_list[0] == 1 or d_value_list[1] == 1:
+    d_first_ace = False
+    d_value += 10
+
 #PLAYER#
 p_value = 0
 p_value_list = []
@@ -165,9 +171,9 @@ p_card_y = 400
 
 
 p_value = p_value_list[0] + p_value_list[1]
-#used to check for 2 aces as starting hand
-if p_value == 22:
-    p_value = 12
+if p_value_list[0] == 1 or p_value_list[1] == 1:
+    p_first_ace = False
+    p_value += 10
 
 #--SFX--#
 #--INTRO SEQUENCE--#
@@ -188,7 +194,7 @@ playsound4 = True
 
 print(d_value)
 print(p_value)
-
+print('--')
 def intro_sequence():
     global playintro
     if playintro:
@@ -217,24 +223,43 @@ def pause():
 hit_count = 0
 dhit_count = 0
 def hit():
-    global p_value
-    global hit_count
+    global p_value, hit_count, p_first_ace
     hit_count += 1
-    if p_value_list[(1+hit_count)] == 11 and p_value > 10:
-        p_value += 1
+    if p_value_list[(1+hit_count)] == 1 and p_first_ace:
+        p_first_ace = False
+        p_value += 11
     else:
         p_value += p_value_list[(1+hit_count)]
+    if p_value > 21 and p_first_ace == False:
+            p_value -= 10
+            p_first_ace = True
+    
+
+
+    #for maintenance
+    print(f'''
+{d_value}
+{d_value_list}
+{p_value}
+{p_value_list}
+
+''')
 
 
 
 def dealer_hit():
-    global d_value
-    global dhit_count
+    global d_value, dhit_count, d_first_ace
     screen.blit(d_card2,(60,100))
     while d_value < 17:
         dhit_count += 1
-        d_value += d_value_list[(1+hit_count)]
-
+        if d_value_list[(1+dhit_count)] == 1 and d_first_ace:
+            d_first_ace = False
+            d_value += 11
+        else:
+            d_value += d_value_list[(1+dhit_count)]
+        if d_value > 21 and d_first_ace == False:
+            d_value -= 10
+            d_first_ace = True
 
 
 def display_cards_after_hit():
@@ -285,22 +310,33 @@ is_stand = False
 
 
 def stand():
-    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck, nobet, dhit_count
+    global is_stand, d_money, p_money, hit_count, d_hand, p_hand, p_value_list, d_value_list, p_value, d_value, Deck, nobet, dhit_count, p_first_ace, d_first_ace
     is_stand = True
     dealer_hit()
     display_cards_after_hit()
     screen.blit(click_to_continue,(0,0))
     pygame.display.update()
-    
+        #for maintenance
+    print(f'''
+{d_value}
+{d_value_list}
+{p_value}
+{p_value_list}
+
+''')
     pause()
 
-    if p_value == 21 or p_value > d_value or d_value > 21:
+
+
+    if p_value > d_value or d_value > 21:
         d_money -= bet_value
         p_money += bet_value
-    if d_value == 21 or d_value > p_value or p_value > 21:
+    elif d_value > p_value or p_value > 21:
         d_money +=  bet_value
         p_money -= bet_value
-        
+
+    p_first_ace = True
+    d_first_ace = True
     hit_count = 0
     dhit_count = 0
     p_value = 0
@@ -309,16 +345,30 @@ def stand():
     p_value_list = []
     p_hand = []
     d_hand = []
+    Deck = {'ace_of_hearts.png':1, '2_of_hearts.png':2,'3_of_hearts.png':3,'4_of_hearts.png':4,'5_of_hearts.png':5,'6_of_hearts.png':6,'7_of_hearts.png':7,'8_of_hearts.png':8,'9_of_hearts.png':9,'10_of_hearts.png':10, 'jack_of_hearts.png':10,'queen_of_hearts.png':10,'king_of_hearts.png':10,'ace_of_diamonds.png':1, '2_of_diamonds.png':2,'3_of_diamonds.png':3,'4_of_diamonds.png':4,'5_of_diamonds.png':5,'6_of_diamonds.png':6,'7_of_diamonds.png':7,'8_of_diamonds.png':8,'9_of_diamonds.png':9,'10_of_diamonds.png':10, 'jack_of_diamonds.png':10,'queen_of_diamonds.png':10,'king_of_diamonds.png':10,'ace_of_spades.png':1,'2_of_spades.png':2,'3_of_spades.png':3,'4_of_spades.png':4,'5_of_spades.png':5,'6_of_spades.png':6,'7_of_spades.png':7,'8_of_spades.png':8,'9_of_spades.png':9,'10_of_spades.png':10,'jack_of_spades.png':10,'queen_of_spades.png':10,'king_of_spades.png':10,'ace_of_clubs.png':1, '2_of_clubs.png':2,'3_of_clubs.png':3,'4_of_clubs.png':4,'5_of_clubs.png':5,'6_of_clubs.png':6,'7_of_clubs.png':7,'8_of_clubs.png':8,'9_of_clubs.png':9,'10_of_clubs.png':10, 'jack_of_clubs.png':10,'queen_of_clubs.png':10,'king_of_clubs.png':10,}
 
-    Deck = {'ace_of_hearts.png':11, '2_of_hearts.png':2,'3_of_hearts.png':3,'4_of_hearts.png':4,'5_of_hearts.png':5,'6_of_hearts.png':6,'7_of_hearts.png':7,'8_of_hearts.png':8,'9_of_hearts.png':9,'10_of_hearts.png':10, 'jack_of_hearts.png':10,'queen_of_hearts.png':10,'king_of_hearts.png':10,'ace_of_diamonds.png':11, '2_of_diamonds.png':2,'3_of_diamonds.png':3,'4_of_diamonds.png':4,'5_of_diamonds.png':5,'6_of_diamonds.png':6,'7_of_diamonds.png':7,'8_of_diamonds.png':8,'9_of_diamonds.png':9,'10_of_diamonds.png':10, 'jack_of_diamonds.png':10,'queen_of_diamonds.png':10,'king_of_diamonds.png':10,'ace_of_spades.png':11,'2_of_spades.png':2,'3_of_spades.png':3,'4_of_spades.png':4,'5_of_spades.png':5,'6_of_spades.png':6,'7_of_spades.png':7,'8_of_spades.png':8,'9_of_spades.png':9,'10_of_spades.png':10,'jack_of_spades.png':10,'queen_of_spades.png':10,'king_of_spades.png':10,'ace_of_clubs.png':11, '2_of_clubs.png':2,'3_of_clubs.png':3,'4_of_clubs.png':4,'5_of_clubs.png':5,'6_of_clubs.png':6,'7_of_clubs.png':7,'8_of_clubs.png':8,'9_of_clubs.png':9,'10_of_clubs.png':10, 'jack_of_clubs.png':10,'queen_of_clubs.png':10,'king_of_clubs.png':10,}
-
-    assign_card_to_hand(d_hand,d_value_list)
+    assign_card_to_hand(d_hand,d_value_list,)
     assign_card_to_hand(p_hand,p_value_list)
     
     d_value = d_value_list[0] + d_value_list[1]
     p_value = p_value_list[0] + p_value_list[1]
+    if d_value_list[0] == 1 or d_value_list[1] == 1:
+        d_first_ace = False
+        d_value += 10
+    if p_value_list[0] == 1 or p_value_list[1] == 1:
+        p_first_ace = False
+        p_value += 10
 
     nobet = True
+
+    #for maintenance
+    print(f'''
+{d_value}
+{d_value_list}
+{p_value}
+{p_value_list}
+
+''')
 
 
 #Value Input#
@@ -395,13 +445,11 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_h:
                 hit()
-                print (f'p_value = {p_value}')
-                print (f'bet_value = {bet_value}')
+
 
             if event.key == pygame.K_s:
                 stand()
-                print (f'd_value = {d_value}')
-                print (f'p_value = {p_value}')
+
     if p_value > 21:
         stand()
     #refresh card images
