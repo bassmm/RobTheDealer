@@ -329,11 +329,13 @@ def stand():
 
 
     if p_value > d_value or d_value > 21:
-        d_money -= bet_value
-        p_money += bet_value
-    elif d_value > p_value or p_value > 21:
-        d_money +=  bet_value
-        p_money -= bet_value
+        if p_value <= 21:
+            d_money -= bet_value
+            p_money += bet_value
+    if d_value > p_value or p_value > 21:
+        if d_value <= 21:
+            d_money +=  bet_value
+            p_money -= bet_value
 
     p_first_ace = True
     d_first_ace = True
