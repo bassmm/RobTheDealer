@@ -88,7 +88,9 @@ dealer_text = game_font.render('Dealer', True, 'White')
 player_text = game_font.render('Player', True, 'White')
 bet_input_title = game_font.render ('Bet Amount:',True, 'White')
 click_to_continue = game_font.render ('click anywhere to continue',True, 'White')
-
+win_text = game_font.render('YOU WIN!',True,'White')
+lose_text = game_font.render('YOU LOSE!',True,(255,97,97))
+click_to_retry = game_font.render ('click anywhere to strat new game',True, 'White')
 
 #MONEY SYSTEM#
 d_money = 1000
@@ -430,13 +432,36 @@ def bet_screen():
         input_rect.w = max(100,(text_surface.get_width() + 10))
         pygame.display.update()
 
-
+def display_winlose():
+    global d_money, p_money, p_money_text, d_money_text
+    if d_money < 1:
+        screen.blit(table_surface,(0,0))
+        screen.blit(win_text,(330,180))
+        screen.blit(click_to_retry,(0,0))
+        pygame.display.update()
+        pause()
+        d_money = 1000
+        p_money = 1000
+        p_money_text = game_font.render(f"${d_money}", True, (143, 197, 111))
+        d_money_text = game_font.render(f"${d_money}", True, (143, 197, 111))
+        
+    elif p_money < 1:
+        screen.blit(table_surface,(0,0))
+        screen.blit(lose_text,(330,180))
+        screen.blit(click_to_retry,(0,0))
+        pygame.display.update()
+        pause()
+        d_money = 1000
+        p_money = 1000
+        d_money_text = game_font.render(f"${d_money}", True, (143, 197, 111))
+        p_money_text = game_font.render(f"${p_money}", True, (143, 197, 111))
+    
 
 
 
 #MAIN CODE#
-while True:
 
+while True:
     bet_screen()
 
     for event in pygame.event.get():
@@ -503,7 +528,7 @@ while True:
     
 
     display_cards_after_hit()
-    
+    display_winlose()
     is_stand = False
     pygame.display.update()
     clock.tick(60)
