@@ -20,7 +20,9 @@
 ## Game Features
 ### Controls
 Stand (S)
+
 Hit(H)
+
 (Enter bet value using input box)
 ### Rules
 The game follows standard Blackjack rules, including:
