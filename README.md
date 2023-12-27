@@ -17,8 +17,11 @@
 ## How to Use
 1. Run the main.py file to start the game.
 2. Follow the on-screen instructions to play the game.
-3. Use the mouse or keyboard to interact with the game.
 ## Game Features
+### Controls
+Stand (S)
+Hit(H)
+(Enter bet value using input box)
 ### Rules
 The game follows standard Blackjack rules, including:
 
@@ -32,7 +35,6 @@ The game follows standard Blackjack rules, including:
 The game provides a graphical interface using Pygame for:
 
 - Displaying cards for the player and dealer.
-- Buttons for actions (Hit, Stand, etc.).
 - Score display.
 - Messages indicating game outcomes (win, lose, draw).
 
