@@ -19,7 +19,7 @@
 2. Follow the on-screen instructions to play the game.
 ## Game Features
 ### Controls
-Stand (S)
+Stand(S)
 
 Hit(H)
 
