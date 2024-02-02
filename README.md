@@ -1,6 +1,7 @@
 # RobTheDealer(WIP)
 
 ## Overview
+![image](https://github.com/bassmm/RobTheDealer/assets/134802035/fa0427cd-32c5-4855-aff5-eca65a4021fd)
 
  - A python game based on the 'blackjack' card game, following the saem rules however with the objective of robbing the dealer of his money. Created with the use of the pygame library. 
 >**NOTE:**  This project was intended to be a challange for myslef as i wanted to get better at python programming and overall improving my ability to translate ideas into code.
@@ -12,11 +13,13 @@
 ## Installation
 1. Ensure Python is installed on your system. You can download it from [Python's official website](https://www.python.org/).
 2. Install Pygame using pip:
-    ``` pip install pygame```
+    ``pip install pygame``
+3. Clone the repository:
+   ``git clone https://github.com/bassmm/RobTheDealer.git``
 
 ## How to Use
 1. Run the main.py file to start the game.
-2. Follow the on-screen instructions to play the game.
+3. Follow the on-screen instructions to play the game.
 ## Game Features
 ### Controls
 Stand(S)
