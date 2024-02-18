@@ -78,6 +78,7 @@ clock = pygame.time.Clock()
 title_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 48)
 game_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 24)
 bet_input_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 32)
+end_screen_font = pygame.font.Font("graphics/fonts/Magicmedieval-pRV1.ttf", 150)
 
 #BACKGROUND#
 table_surface = pygame.image.load('graphics/background_wood.png').convert()
@@ -88,9 +89,9 @@ dealer_text = game_font.render('Dealer', True, 'White')
 player_text = game_font.render('Player', True, 'White')
 bet_input_title = game_font.render ('Bet Amount:',True, 'White')
 click_to_continue = game_font.render ('click anywhere to continue',True, 'White')
-win_text = game_font.render('YOU WIN!',True,'White')
-lose_text = game_font.render('YOU LOSE!',True,(255,97,97))
-click_to_retry = game_font.render ('click anywhere to strat new game',True, 'White')
+win_text = end_screen_font.render('YOU WIN!',True,'White')
+lose_text = end_screen_font.render('YOU LOSE!',True,(255,97,97))
+click_to_retry = game_font.render ('click anywhere to start new game',True, 'White')
 
 #MONEY SYSTEM#
 d_money = 1000
@@ -436,7 +437,7 @@ def display_winlose():
     global d_money, p_money, p_money_text, d_money_text
     if d_money < 1:
         screen.blit(table_surface,(0,0))
-        screen.blit(win_text,(330,180))
+        screen.blit(win_text,(60,120))
         screen.blit(click_to_retry,(0,0))
         pygame.display.update()
         pause()
@@ -447,7 +448,7 @@ def display_winlose():
         
     elif p_money < 1:
         screen.blit(table_surface,(0,0))
-        screen.blit(lose_text,(330,180))
+        screen.blit(lose_text,(25,120))
         screen.blit(click_to_retry,(0,0))
         pygame.display.update()
         pause()
