@@ -1,4 +1,4 @@
-# RobTheDealer(WIP)
+# RobTheDealer
 
 ## Overview
 ![image](https://github.com/bassmm/RobTheDealer/assets/134802035/fa0427cd-32c5-4855-aff5-eca65a4021fd)
