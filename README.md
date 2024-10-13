@@ -11,15 +11,17 @@
  - Pygame library
 
 ## Installation
+### Source
 1. Ensure Python is installed on your system. You can download it from [Python's official website](https://www.python.org/).
 2. Install Pygame using pip:
     ``pip install pygame``
 3. Clone the repository:
    ``git clone https://github.com/bassmm/RobTheDealer.git``
 
-## How to Use
-1. Run the main.py file to start the game.
-3. Follow the on-screen instructions to play the game.
+### Releases
+1. Download the zip file from the releases tab.
+2. Unzip the file
+3. Run the executable titled "Game"
 ## Game Features
 ### Controls
 Stand(S)
